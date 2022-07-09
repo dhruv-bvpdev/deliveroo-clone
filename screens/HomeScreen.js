@@ -1,4 +1,4 @@
-import { useLayoutEffect } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import {
   Text,
   SafeAreaView,
@@ -17,14 +17,30 @@ import {
 } from 'react-native-heroicons/outline'
 import Categories from '../components/Categories'
 import FeaturedRow from '../components/FeaturedRow'
+import sanityClient from '../sanity'
 
 const HomeScreen = () => {
   const navigation = useNavigation()
+  const [featuredCategories, setFeaturedCategories] = useState([])
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false
     })
+  }, [])
+
+  useEffect(() => {
+    sanityClient
+      .fetch(
+        `
+    *[_type == "featured"] {
+      name,
+      short_description,
+      _id,
+    }
+    `
+      )
+      .then(data => setFeaturedCategories(data))
   }, [])
 
   return (
@@ -64,23 +80,15 @@ const HomeScreen = () => {
         <Categories />
 
         {/* Featured rows */}
-        <FeaturedRow
-          id="123"
-          title="Featured"
-          description="Paid placements for our partners"
-        />
 
-        <FeaturedRow
-          id="234"
-          title="Tasty Discounts"
-          description="Everyone is enjoying these juicy discounts"
-        />
-
-        <FeaturedRow
-          id="345"
-          title="Offers near you"
-          description="Why not support your local restaurant tonight"
-        />
+        {featuredCategories?.map(category => (
+          <FeaturedRow
+            key={category._id}
+            id={category._id}
+            title={category.name}
+            description={category.short_description}
+          />
+        ))}
       </ScrollView>
     </SafeAreaView>
   )

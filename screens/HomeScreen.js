@@ -15,6 +15,7 @@ import {
   SearchIcon,
   AdjustmentsIcon
 } from 'react-native-heroicons/outline'
+import Categories from '../components/Categories'
 
 const HomeScreen = () => {
   const navigation = useNavigation()
@@ -59,6 +60,7 @@ const HomeScreen = () => {
       {/* Body */}
       <ScrollView>
         {/* Categories */}
+        <Categories />
         {/* Featured row */}
       </ScrollView>
     </SafeAreaView>

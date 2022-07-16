@@ -6,7 +6,8 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
-  ScrollView
+  ScrollView,
+  Alert
 } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { XCircleIcon } from 'react-native-heroicons/solid'
@@ -19,6 +20,8 @@ import {
 import SafeViewAndroid from '../utils/SafeViewAndroid'
 import { urlFor } from '../sanity'
 import CurrencyFormat from 'react-currency-format'
+import { useStripe } from '@stripe/stripe-react-native'
+import { API_URL } from '@env'
 
 const CartScreen = () => {
   const navigation = useNavigation()
@@ -29,14 +32,58 @@ const CartScreen = () => {
 
   const dispatch = useDispatch()
   const [groupedItemsInCart, setGroupedItemsInCart] = useState([])
+  const [loading, setLoading] = useState(false)
 
-  //TODO add a modal for situation when user removes all items from cart
+  if (cartTotal === 0) navigation.goBack()
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false
     })
   }, [])
+
+  const { initPaymentSheet, presentPaymentSheet } = useStripe()
+
+  const fetchPaymentSheetParams = async () => {
+    const response = await fetch(`${API_URL}/api/payment`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        paymentMethodType: 'card',
+        total_order_value: cartTotal + deliveryFee
+      })
+    })
+    const { clientSecret } = await response.json()
+
+    return {
+      clientSecret
+    }
+  }
+
+  const initializePaymentSheet = async () => {
+    const { clientSecret } = await fetchPaymentSheetParams()
+
+    const { error } = await initPaymentSheet({
+      paymentIntentClientSecret: clientSecret,
+      merchantDisplayName: 'Deliveroo'
+    })
+    if (!error) {
+      setLoading(true)
+    }
+  }
+
+  const openPaymentSheet = async () => {
+    const { error } = await presentPaymentSheet()
+
+    if (error) {
+      Alert.alert(`Error code: ${error.code}`, error.message)
+      setLoading(false)
+    } else {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
     const groupedItems = items.reduce((results, item) => {
@@ -45,7 +92,12 @@ const CartScreen = () => {
     }, {})
 
     setGroupedItemsInCart(groupedItems)
+    initializePaymentSheet()
   }, [items])
+
+  const buttonStyle = `rounded-lg p-4 ${
+    loading ? 'bg-[#00CCBB]' : 'bg-gray-400'
+  }`
 
   return (
     <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
@@ -151,7 +203,11 @@ const CartScreen = () => {
             />
           </View>
 
-          <TouchableOpacity className="rounded-lg bg-[#00CCBB] p-4">
+          <TouchableOpacity
+            onPress={openPaymentSheet}
+            disabled={!loading}
+            className={buttonStyle}
+          >
             <Text className="text-center text-white text-lg font-bold">
               Place Order
             </Text>

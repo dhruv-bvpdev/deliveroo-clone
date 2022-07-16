@@ -4,10 +4,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { Provider } from 'react-redux'
 import { StripeProvider } from '@stripe/stripe-react-native'
 import { store } from './store'
-import { API_URL } from '@env'
 import HomeScreen from './screens/HomeScreen'
 import RestaurantScreen from './screens/RestaurantScreen'
 import CartScreen from './screens/CartScreen'
+import PreparingOrderScreen from './screens/PreparingOrderScreen'
 
 const Stack = createNativeStackNavigator()
 
@@ -27,6 +27,10 @@ export default function App() {
                   presentation: 'modal',
                   animation: 'slide_from_bottom'
                 }}
+              />
+              <Stack.Screen
+                name="PreparingOrder"
+                component={PreparingOrderScreen}
               />
             </Stack.Navigator>
           </TailwindProvider>

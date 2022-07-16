@@ -81,7 +81,7 @@ const CartScreen = () => {
       Alert.alert(`Error code: ${error.code}`, error.message)
       setLoading(false)
     } else {
-      setLoading(false)
+      navigation.navigate('PreparingOrder')
     }
   }
 

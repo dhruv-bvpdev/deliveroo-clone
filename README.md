@@ -1,29 +1,23 @@
-
 # Deliveroo-Clone
 
 A food ordering app built using Expo
 
-
-
-
 ## Screenshots
 
-![Home](/screenshots/home.png?raw=true)
-![Restaurant](/screenshots/restaurant.png?raw=true)
-![Cart](/screenshots/cart.png?raw=true)
-![Payment](/screenshots/payment.png?raw=true)
-![Wait](/screenshots/wait.png?raw=true)
-![Map](/screenshots/map.png?raw=true)
-
+![Home](/screenshots/home.jpg?raw=true)
+![Restaurant](/screenshots/restaurant.jpg?raw=true)
+![Cart](/screenshots/cart.jpg?raw=true)
+![Payment](/screenshots/payment.jpg?raw=true)
+![Wait](/screenshots/wait.jpg?raw=true)
+![Map](/screenshots/map.jpg?raw=true)
 
 ## Tech Stack
 
-**Client:** Expo, React-Native, React, Redux, TailwindCSS, 
+**Client:** Expo, React-Native, React, Redux, TailwindCSS,
 
 **Server:** Node, Express, Stripe
 
 **Database:** Sanity
-
 
 ## Run Locally
 
@@ -78,5 +72,3 @@ To run this project, you will need to add the following environment variables to
 `STRIPE_PRIV_KEY`
 
 `PROJECT_PATH`
-
-
